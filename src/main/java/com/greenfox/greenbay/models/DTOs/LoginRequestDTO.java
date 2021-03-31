@@ -7,12 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
-public class ErrorResponseDTO {
-  private final String status = "Error";
-  private String message;
-
-  public ErrorResponseDTO(String message) {
-    this.message = message;
-  }
+public class LoginRequestDTO {
+  private String username;
+  private String password;
 }

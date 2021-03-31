@@ -24,7 +24,7 @@ public class ItemService {
     if(!isValidURL(item.getPicURL())){
       throw new InvalidURLException("Url is invalid");
     }
-    if(item.getPurchasePrice() < 1 && item.getStartingPrice() < 1){
+    if(item.getPurchasePrice() < 1 || item.getStartingPrice() < 1){
       throw new InvalidPriceException("The prices must be positive whole numbers");
     }
     return saveItem(item);

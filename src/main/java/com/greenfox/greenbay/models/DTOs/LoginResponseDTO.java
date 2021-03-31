@@ -8,11 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ErrorResponseDTO {
-  private final String status = "Error";
-  private String message;
+public class LoginResponseDTO {
+  private final String status = "Authenticated";
+  private String token;
 
-  public ErrorResponseDTO(String message) {
-    this.message = message;
+  public LoginResponseDTO(String token) {
+    this.token = token;
   }
 }
