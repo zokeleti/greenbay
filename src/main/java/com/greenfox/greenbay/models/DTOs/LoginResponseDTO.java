@@ -11,6 +11,7 @@ import lombok.Setter;
 public class LoginResponseDTO {
   private final String status = "Authenticated";
   private String token;
+  private Long balance;
 
   public LoginResponseDTO(String token) {
     this.token = token;

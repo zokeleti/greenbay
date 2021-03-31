@@ -26,7 +26,7 @@ public class User {
   private List<Bid> bids = new ArrayList<>();
   @OneToMany(mappedBy = "owner")
   private List<Item> items = new ArrayList<>();
-  private Long wallet = 0L;
+  private Long balance = 0L;
 
   public User(String username, String password) {
     this.username = username;

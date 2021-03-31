@@ -2,6 +2,7 @@ package com.greenfox.greenbay.controllers;
 
 import com.greenfox.greenbay.models.DTOs.LoginRequestDTO;
 import com.greenfox.greenbay.models.DTOs.LoginResponseDTO;
+import com.greenfox.greenbay.models.DTOs.ResponseDTO;
 import com.greenfox.greenbay.models.Item;
 import com.greenfox.greenbay.models.User;
 import com.greenfox.greenbay.models.exceptions.InvalidPriceException;
@@ -61,8 +62,12 @@ public class UserController {
     } catch (BadCredentialsException e) {
       throw new Exception("Incorrect username or password", e);
     }
-    final UserDetails userDetails = myUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+    String username = authenticationRequest.getUsername();
+    final UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
     final String jwt = jwtUtil.generateToken(userDetails);
-    return ResponseEntity.ok(new LoginResponseDTO(jwt));
+    LoginResponseDTO response = new LoginResponseDTO(jwt);
+    response.setBalance(userService.findByUsername(username).getBalance());
+    return ResponseEntity.ok(response);
   }
+
 }
