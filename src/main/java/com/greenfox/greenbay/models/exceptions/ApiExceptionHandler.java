@@ -9,7 +9,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ApiExceptionHandler {
 
-  @ExceptionHandler(value = {MissingFieldException.class, InvalidPriceException.class, InvalidURLException.class})
+  @ExceptionHandler(value = {
+      MissingFieldException.class,
+      InvalidPriceException.class,
+      InvalidURLException.class,
+      ItemNotFoundException.class
+  })
   public ResponseEntity<ErrorResponseDTO> handleValidationExceptions(Exception e) {
     ErrorResponseDTO response = new ErrorResponseDTO(e.getMessage());
     return ResponseEntity.status(400).body(response);

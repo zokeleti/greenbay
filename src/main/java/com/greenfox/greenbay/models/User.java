@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
@@ -17,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Table(name = "users")
 public class User {
 
   @Id
@@ -24,7 +27,7 @@ public class User {
   private String password;
   @OneToMany(mappedBy = "bidder")
   private List<Bid> bids = new ArrayList<>();
-  @OneToMany(mappedBy = "owner")
+  @OneToMany(mappedBy = "seller")
   private List<Item> items = new ArrayList<>();
   private Long balance = 0L;
 

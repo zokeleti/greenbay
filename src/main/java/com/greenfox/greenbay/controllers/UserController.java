@@ -7,7 +7,9 @@ import com.greenfox.greenbay.models.Item;
 import com.greenfox.greenbay.models.User;
 import com.greenfox.greenbay.models.exceptions.InvalidPriceException;
 import com.greenfox.greenbay.models.exceptions.InvalidURLException;
+import com.greenfox.greenbay.models.exceptions.ItemNotFoundException;
 import com.greenfox.greenbay.models.exceptions.MissingFieldException;
+import com.greenfox.greenbay.models.exceptions.UserNotFoundException;
 import com.greenfox.greenbay.security.JwtUtil;
 import com.greenfox.greenbay.services.ItemService;
 import com.greenfox.greenbay.services.MyUserDetailsService;
@@ -18,9 +20,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,11 +49,10 @@ public class UserController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<Item> createItem(@RequestBody Item item)
-      throws MissingFieldException, InvalidPriceException, InvalidURLException {
-    User user = new User("username", "password");
-    userService.saveUser(user);
-    item.setOwner(user);
+  public ResponseEntity<Item> createItem(@RequestBody Item item,  @RequestHeader("Authorization") String header)
+      throws MissingFieldException, InvalidPriceException, InvalidURLException, UserNotFoundException {
+    User user = userService.findByUsername(jwtUtil.extractUsername(header.split(" ")[1]));
+    item.setSeller(user);
     Item newItem = itemService.createItem(item);
     return ResponseEntity.ok(newItem);
   }
@@ -68,6 +72,25 @@ public class UserController {
     LoginResponseDTO response = new LoginResponseDTO(jwt);
     response.setBalance(userService.findByUsername(username).getBalance());
     return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<?> listItems(@RequestParam(required = false) Integer page) {
+    if(page == null){
+      return ResponseEntity.ok(itemService.listItemsByPage(0));
+    }
+    if(page < 1){
+      return ResponseEntity.badRequest().body(new ResponseDTO("Page number must be positive whole number"));
+    }
+    return ResponseEntity.ok(itemService.listItemsByPage(page - 1));
+  }
+
+  @GetMapping("/item")
+  public ResponseEntity<?> getItem(@RequestParam(required = false) Long id) throws ItemNotFoundException {
+    if(id == null){
+      return ResponseEntity.badRequest().body(new ResponseDTO("'id' parameter is missing"));
+    }
+    return ResponseEntity.ok(itemService.findById(id));
   }
 
 }
